@@ -57,12 +57,14 @@ async function trySetCookies(browser) {
     if (fs.existsSync(configFile)) {
         let config = JSON.parse(fs.readFileSync(configFile));
 
-        await browser.setCookie({
-            name: 'LEETCODE_SESSION',
-            value: config.cookie,
-        });
+        if (config != null && config.cookie != null) {
+            await browser.setCookie({
+                name: 'LEETCODE_SESSION',
+                value: config.cookie,
+            });
 
-        await browser.refresh();
+            await browser.refresh();
+        }
     }
 }
 
