@@ -57,7 +57,7 @@ async function trySetCookies(browser) {
     if (fs.existsSync(configFile)) {
         let config = JSON.parse(fs.readFileSync(configFile));
 
-        if (config != null && config.cookie != null) {
+        if (config && config.cookie) {
             await browser.setCookie({
                 name: 'LEETCODE_SESSION',
                 value: config.cookie,
@@ -98,7 +98,7 @@ function getProblems() {
                 acceptance: parseFloat(columns[3].innerText) / 100,
                 difficulty: columns[4].innerText,
                 frequency: parseFloat(columns.eq(5).attr('data-frequency')),
-                premiumOnly: titleColumn.children('i.fs').length > 0,
+                premiumOnly: titleColumn.children('i.fa').length > 0,
                 tags: tags,
                 companies: companies,
             };
