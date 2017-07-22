@@ -23,14 +23,22 @@ async function scrape() {
 
         await trySetCookies(browser);
 
-        let tags = (await browser.execute(getTags)).value;
         let problems = {};
+
+        await browser.waitForVisible('span.row-selector select', 5000);
+        let homePageProblems = (await browser.execute(getProblemsOnHomePage)).value;
+
+        for (homePageProblem of homePageProblems) {
+            problems[homePageProblem.id] = homePageProblem;
+        }
+
+        let tags = (await browser.execute(getTags)).value;
 
         for (tag of tags) {
             await browser.url(tag.url);
-            let tagProblems = (await browser.execute(getProblems)).value;
+            let tagPageProblems = (await browser.execute(getProblemsOnTagPage)).value;
 
-            for (let tagProblem of tagProblems) {
+            for (let tagProblem of tagPageProblems) {
                 problems[tagProblem.id] = tagProblem;
             }
         }
@@ -77,7 +85,34 @@ function getTags() {
         .get();
 }
 
-function getProblems() {
+function getProblemsOnHomePage() {
+    $('span.row-selector select')
+        .val('9007199254740991')[0]
+        .dispatchEvent(new Event('change', { bubbles: true }));
+
+    return $('div.question-list-table table tbody.reactable-data tr')
+        .map((_, problemNode) => {
+            let columns = $(problemNode).children('td');
+            let titleColumn = columns.eq(2);
+
+            let titleNode = titleColumn.find('a')[0];
+
+            return {
+                id: parseInt(columns[1].innerText),
+                title: titleNode.innerText,
+                url: titleNode.href,
+                acceptance: parseFloat(columns[4].innerText) / 100,
+                difficulty: columns[5].innerText,
+                frequency: parseFloat(columns.eq(6).attr('data-frequency')),
+                premiumOnly: titleColumn.find('i.fa').length > 0,
+                tags: [],
+                companies: [],
+            };
+        })
+        .get();
+}
+
+function getProblemsOnTagPage() {
     return $('table#question_list tbody tr')
         .map((_, problemNode) => {
             let columns = $(problemNode).children('td');
