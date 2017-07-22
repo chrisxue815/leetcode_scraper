@@ -69,12 +69,9 @@ async function trySetCookies(browser) {
 }
 
 function getTags() {
-    // ul.list-group:has(span:contains("Tag")) a
-    return $('span:contains("Tag")')
-        .closest('ul.list-group')
-        .children('a')
+    return $('#current-topic-tags a')
         .map((_, tagNode) => ({
-            name: $(tagNode).children('small')[0].innerText,
+            name: $(tagNode).children('span.text-sm')[0].innerText,
             url: tagNode.href,
         }))
         .get();
@@ -102,7 +99,8 @@ function getProblems() {
                 tags: tags,
                 companies: companies,
             };
-        });
+        })
+        .get();
 }
 
 main();
