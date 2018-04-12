@@ -80,7 +80,7 @@ async function trySetCookies(browser) {
 function getTags() {
     return $('#current-topic-tags a')
         .map((_, tagNode) => ({
-            name: $(tagNode).children('span.text-sm')[0].innerText,
+            name: $.trim($(tagNode).children('span.text-sm')[0].innerText),
             url: tagNode.href,
         }))
         .get();
