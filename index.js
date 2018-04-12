@@ -78,6 +78,8 @@ async function trySetCookies(browser) {
 }
 
 function getTags() {
+    expandTags('topic');
+
     return $('#current-topic-tags a')
         .map((_, tagNode) => ({
             name: $.trim($(tagNode).children('span.text-sm')[0].innerText),
