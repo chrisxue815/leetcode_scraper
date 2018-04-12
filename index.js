@@ -36,6 +36,7 @@ async function scrape() {
 
         for (tag of tags) {
             await browser.url(tag.url);
+            await browser.waitForVisible('.tags-toggl__3H2x input', 5000);
             let tagPageProblems = (await browser.execute(getProblemsOnTagPage)).value;
 
             for (let tagProblem of tagPageProblems) {
@@ -113,26 +114,27 @@ function getProblemsOnHomePage() {
 }
 
 function getProblemsOnTagPage() {
-    return $('table#question_list tbody tr')
+    $('.tags-toggl__3H2x input')
+        .prop('checked', true)[0]
+        .dispatchEvent(new Event('click', { bubbles: true }));
+
+    return $('table.table__25it tbody tr')
         .map((_, problemNode) => {
             let columns = $(problemNode).children('td');
             let titleColumn = columns.eq(2);
+            let tagsColumn = columns.eq(3);
 
-            let titleNode = titleColumn.children('a')[0];
-            let categoryDivs = titleColumn.children('div.tags');
-            let tags = categoryDivs.eq(0).children('a').map((_, tagNode) => tagNode.innerText).get();
-            let companies = categoryDivs.eq(1).children('a').map((_, tagNode) => tagNode.innerText).get();
+            let titleNode = titleColumn.find('a')[0];
+            let tags = tagsColumn.find('a').map((_, tagNode) => tagNode.innerText).get();
 
             return {
                 id: parseInt(columns[1].innerText),
                 title: titleNode.innerText,
                 url: titleNode.href,
-                acceptance: parseFloat(columns[3].innerText) / 100,
-                difficulty: columns[4].innerText,
-                frequency: parseFloat(columns.eq(5).attr('data-frequency')),
-                premiumOnly: titleColumn.children('i.fa').length > 0,
+                acceptance: parseFloat(columns[4].innerText) / 100,
+                difficulty: columns[5].innerText,
+                premiumOnly: titleColumn.find('i.fa').length > 0,
                 tags: tags,
-                companies: companies,
             };
         })
         .get();
