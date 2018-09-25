@@ -106,7 +106,7 @@ function getProblemsOnHomePage() {
                 url: titleNode.href,
                 acceptance: parseFloat(columns[4].innerText) / 100,
                 difficulty: columns[5].innerText,
-                frequency: parseFloat(columns.eq(6).attr('data-frequency')),
+                frequency: parseFloat(columns.eq(6).attr('value')),
                 premiumOnly: titleColumn.find('i.fa').length > 0,
                 tags: [],
                 companies: [],
@@ -120,14 +120,14 @@ function getProblemsOnTagPage() {
         .prop('checked', true)[0]
         .dispatchEvent(new Event('click', { bubbles: true }));
 
-    return $('table.table__25it tbody tr')
+    return $('table.table__XKyc tbody tr')
         .map((_, problemNode) => {
             let columns = $(problemNode).children('td');
             let titleColumn = columns.eq(2);
             let tagsColumn = columns.eq(3);
 
             let titleNode = titleColumn.find('a')[0];
-            let tags = tagsColumn.find('a').map((_, tagNode) => tagNode.innerText).get();
+            let tags = tagsColumn.find('a').map((_, tagNode) => tagNode).get();
 
             return {
                 id: parseInt(columns[1].innerText),
@@ -136,7 +136,8 @@ function getProblemsOnTagPage() {
                 acceptance: parseFloat(columns[4].innerText) / 100,
                 difficulty: columns[5].innerText,
                 premiumOnly: titleColumn.find('i.fa').length > 0,
-                tags: tags,
+                tags: tags.filter(x => x.href.includes('/tag/')).map(x => x.innerText),
+                companies: tags.filter(x => x.href.includes('/company/')).map(x => x.innerText),
             };
         })
         .get();
