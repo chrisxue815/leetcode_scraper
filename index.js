@@ -85,6 +85,7 @@ function getTags() {
             name: $.trim($(tagNode).children('span.text-sm')[0].innerText),
             url: tagNode.href,
         }))
+        .sort((a, b) => a.name.localeCompare(b.name))
         .get();
 }
 
@@ -135,6 +136,7 @@ function getProblemsOnTagPage() {
                 url: titleNode.href,
                 acceptance: parseFloat(columns[4].innerText) / 100,
                 difficulty: columns[5].innerText,
+                frequency: parseFloat(columns.eq(6).attr('value')),
                 premiumOnly: titleColumn.find('i.fa').length > 0,
                 tags: tags.filter(x => x.href.includes('/tag/')).map(x => x.innerText),
                 companies: tags.filter(x => x.href.includes('/company/')).map(x => x.innerText),
