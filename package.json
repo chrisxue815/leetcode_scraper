@@ -13,6 +13,6 @@
   "author": "Chris Xue <chrisxue815@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "webdriverio": "^4.6.2"
+    "webdriverio": "^4.13.2"
   }
 }
